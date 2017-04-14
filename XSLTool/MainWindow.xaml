@@ -1,0 +1,83 @@
+﻿<Window x:Class="XSLTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:XSLTool"
+		  mc:Ignorable="d" Title="XSLTool" Height="350" Width="525" Loaded="Window_Loaded">
+
+	<Window.CommandBindings>
+		<CommandBinding Command="{x:Static local:Commands.ChooseXmlFile}" Executed="ChooseXmlFile_Executed" />
+		<CommandBinding Command="{x:Static local:Commands.ChooseXsltFile}" Executed="ChooseXsltFile_Executed" />
+		<CommandBinding Command="{x:Static local:Commands.Transform}" Executed="Transform_Executed" />
+
+	</Window.CommandBindings>	
+	
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="32" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="32" />
+		</Grid.RowDefinitions>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="5" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+
+		<Menu HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Grid.RowSpan="1" VerticalAlignment="Stretch" Background="{DynamicResource {x:Static SystemColors.WindowColor}}">
+			<MenuItem Header="File">
+				<MenuItem Header="Choose Data file..." Command="{x:Static local:Commands.ChooseXmlFile}"/>
+				<MenuItem Header="Choose Sheet file..." Command="{x:Static local:Commands.ChooseXsltFile}"/>
+				<Separator />
+				<MenuItem Header="E_xit"/>
+			</MenuItem>
+		</Menu>
+
+		<WrapPanel Grid.Column="2" HorizontalAlignment="Right" Margin="5,5,5,5">
+			<ComboBox Name="OutputType" SelectedIndex="0" SelectionChanged="OutputType_SelectionChanged">
+				<ComboBoxItem Tag="XML">XML</ComboBoxItem>
+				<ComboBoxItem Tag="HTML">HTML</ComboBoxItem>
+				<ComboBoxItem Tag="SQL">SQL</ComboBoxItem>
+				<ComboBoxItem Tag="C#">C#</ComboBoxItem>
+				<ComboBoxItem Tag="Javascript">JavaScript</ComboBoxItem>
+			</ComboBox>
+			<GridSplitter Width="5"></GridSplitter>
+			<Button Name="TransformNow" Click="TransformNow_Click">Transform</Button>
+			<CheckBox Name="AutoTransformEnabled" IsChecked="True" Content="Auto" Grid.Column="2" HorizontalAlignment="Left" Margin="5,5,5,5" VerticalAlignment="Center"/>
+		</WrapPanel>
+
+
+		<TabControl Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+			<TabItem Header="Data" MouseDoubleClick="TabItem_MouseDoubleClick" Tag="CHOOSE_XML">
+				<Grid Background="#FFE5E5E5">
+					<!-- avalon editor 1 -->
+
+					<avalon:TextEditor xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit" Name="Data" SyntaxHighlighting="XML" FontFamily="Consolas" ShowLineNumbers="True" KeyDown="Editor_KeyDown">
+					</avalon:TextEditor>
+
+				</Grid>
+			</TabItem>
+			<TabItem Header="Sheet" MouseDoubleClick="TabItem_MouseDoubleClick" Tag="CHOOSE_XSLT">
+				<Grid Background="#FFE5E5E5">
+					<!-- avalon editor 1 -->
+
+					<avalon:TextEditor xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit" Name="Sheet" SyntaxHighlighting="XML" FontFamily="Consolas" Grid.ColumnSpan="3" ShowLineNumbers="True" KeyDown="Editor_KeyDown">
+					</avalon:TextEditor>
+
+				</Grid>
+			</TabItem>
+		</TabControl>
+
+		<GridSplitter Grid.Row="1" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+
+
+		<avalon:TextEditor Grid.Row="1" Grid.Column="2" xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit" Name="Output" SyntaxHighlighting="None" FontFamily="Consolas" ShowLineNumbers="True">
+		</avalon:TextEditor>
+		
+		
+		<Label Name="StatusMessage" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch"/>
+	</Grid>
+
+</Window>
