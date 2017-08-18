@@ -214,6 +214,7 @@ namespace XSLTool
 			SetOutputHighlighting(languageName);
 
 			VisualDisplayToggle.IsEnabled = (languageName == "HTML");
+			SetVisualizationEnabled(VisualDisplayToggle.IsEnabled && (VisualDisplayToggle.IsChecked ?? false));
 		}
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -255,12 +256,19 @@ namespace XSLTool
 		{
 			CheckBox check = (CheckBox)sender;
 			bool wantVisual = check.IsEnabled && (check.IsChecked ?? false);
+			SetVisualizationEnabled(wantVisual);
+		}
 
-			Browser.Visibility = wantVisual ? Visibility.Visible : Visibility.Hidden;
-			Output.Visibility = wantVisual ? Visibility.Hidden : Visibility.Visible;
+		private void SetVisualizationEnabled(bool wantVisual)
+		{
+			if (Browser != null && Output != null)
+			{
+				Browser.Visibility = wantVisual ? Visibility.Visible : Visibility.Hidden;
+				Output.Visibility = wantVisual ? Visibility.Hidden : Visibility.Visible;
 
-			if (wantVisual)
-				OutputChanged(Output.Text);
+				if (wantVisual)
+					OutputChanged(Output.Text);
+			}
 		}
 
 		AboutBox aboutbox = new AboutBox();
