@@ -18,6 +18,8 @@ using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Xsl;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.Win32;
 
@@ -70,6 +72,70 @@ namespace XSLTool
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			Sheet.TextArea.TextEntering += TextArea_TextEntering;
+			Sheet.TextArea.TextEntered += TextArea_TextEntered;
+			Sheet.TextArea.KeyDown += TextArea_KeyDown;
+		}
+
+		private void TextArea_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.J && (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
+			{
+				OpenCompletionWindowFor(sender);
+				e.Handled = true;
+			}
+		}
+
+		CompletionWindow completionWindow;
+
+		void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+		{
+			//if (IsOpenCompletionEvent(e))
+			//{
+			//	OpenCompletionWindowFor(sender);
+			//}
+		}
+
+		private void OpenCompletionWindowFor(object sender)
+		{
+			if (sender is TextArea)
+			{
+				TextArea textArea = (TextArea)sender;
+
+				XSLCompletionList list = new XSLCompletionList();
+
+				// Open code completion after the user has pressed dot:
+				completionWindow = new CompletionWindow(textArea);
+				IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+				data.Clear();
+
+				foreach (var item in list)
+					data.Add(item);
+
+				completionWindow.Show();
+				completionWindow.Closed += delegate {
+					completionWindow = null;
+				};
+			}
+		}
+
+		private bool IsOpenCompletionEvent(TextCompositionEventArgs e)
+		{
+			return e.Text.Length == 1 && e.Text[0] == (char)10;
+		}
+
+		void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+		{
+			//if (e.Text.Length > 0 && completionWindow != null)
+			//{
+			//	if (e.Text[0] == (char)13)
+			//	{
+			//		// Whenever a non-letter is typed while the completion window is open,
+			//		// insert the currently selected element.
+			//		completionWindow.CompletionList.RequestInsertion(e);
+			//	}
+			//}
 		}
 
 		private void ChooseDataFile()
