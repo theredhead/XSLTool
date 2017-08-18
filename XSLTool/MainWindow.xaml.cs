@@ -40,7 +40,6 @@ namespace XSLTool
 		private void ChooseDataFile()
 		{
 			ChooseFileFor(Data, "Choose a data file...");
-
 		}
 
 		private void ChooseSheetFile()
@@ -98,8 +97,9 @@ namespace XSLTool
 
 			dialog.Title = title;
 
-			dialog.FileOk += (sender, arg) => {
-				editor.Text = System.IO.File.ReadAllText(dialog.FileName);
+			dialog.FileOk += (sender, arg) =>
+			{
+				editor.Text = File.ReadAllText(dialog.FileName);
 			};
 
 			NeedsTransformation = true;
@@ -126,7 +126,7 @@ namespace XSLTool
 							}
 							catch (Exception ex)
 							{
-								throw new TransformationException($"Invalid XSLT: {ex.Message}", ex);
+								throw new TransformationException($"Invalid XSLT: {ex.Message} {ex.InnerException?.Message}", ex);
 							}
 
 							using (StringWriter sw = new StringWriter())
@@ -137,6 +137,7 @@ namespace XSLTool
 									{
 										xslt.Transform(xri, xwo);
 										Output.Text = sw.ToString();
+										OutputChanged(Output.Text);
 									}
 									catch (Exception ex)
 									{
@@ -151,6 +152,14 @@ namespace XSLTool
 			StatusMessage.Content = "";
 			NeedsTransformation = false;
 		}
+
+		// Gets called whenever the output is changed by a transformation.
+		private void OutputChanged(string text)
+		{
+			if (Browser.IsVisible)
+				Browser.NavigateToString(text);
+		}
+
 		private void ExecuteTransformation()
 		{
 			try
@@ -181,7 +190,8 @@ namespace XSLTool
 			TimeSpan delay = TimeSpan.FromMilliseconds(AutoTransformDelayMsecs);
 
 			AutoTransformTimer = new DispatcherTimer();
-			AutoTransformTimer.Tick += (sender, e) => {
+			AutoTransformTimer.Tick += (sender, e) =>
+			{
 				// if the setting to auto transform is enabled and time distance between last recorded keypress and now > auto transform delay...		
 
 				if (AutoTransformEnabled.IsChecked == true)
@@ -195,23 +205,26 @@ namespace XSLTool
 		#region Event handling
 		private void TabItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			ActByTag((string)((TabItem)sender).Tag);
+			// ActByTag((string)((TabItem)sender).Tag);
 		}
 
 		private void OutputType_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			string languageName = ((ComboBoxItem)(e.AddedItems[0])).Tag as string;
 			SetOutputHighlighting(languageName);
+
+			VisualDisplayToggle.IsEnabled = (languageName == "HTML");
 		}
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			RegisterSyntaxHighlighters();
 			Sheet.Text = GetResourceString("Initial.xslt");
-			Data.Text = "<Root />";
+			Data.Text = GetResourceString("Initial.xml");
 			SetupAutoTransformTimer();
 
 			SetOutputHighlighting("XML");
+			ExecuteTransformation();
 		}
 
 		private void TransformNow_Click(object sender, RoutedEventArgs e)
@@ -237,5 +250,38 @@ namespace XSLTool
 			ExecuteTransformation();
 		}
 		#endregion Event handling
+
+		private void VisualDisplayToggle_Toggled(object sender, RoutedEventArgs e)
+		{
+			CheckBox check = (CheckBox)sender;
+			bool wantVisual = check.IsEnabled && (check.IsChecked ?? false);
+
+			Browser.Visibility = wantVisual ? Visibility.Visible : Visibility.Hidden;
+			Output.Visibility = wantVisual ? Visibility.Hidden : Visibility.Visible;
+
+			if (wantVisual)
+				OutputChanged(Output.Text);
+		}
+
+		AboutBox aboutbox = new AboutBox();
+		private void ShowAboutBox_Executed(object sender, RoutedEventArgs e)
+		{
+			aboutbox.Show();
+		}
+		private void SaveOutputToFile_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			SaveFileDialog dialog = new SaveFileDialog();
+			dialog.Title = "Save generated output to file...";
+			dialog.CheckFileExists = true;
+			string ext = Output.SyntaxHighlighting.Name.ToLower();
+			dialog.Filter = $"{ext}|*.{ext}|Any|*.*";
+
+			dialog.FileOk += (o, arg) => {
+				string path = dialog.FileName;
+				File.WriteAllText(path, Output.Text);
+			};
+
+			dialog.ShowDialog(this);
+		}
 	}
 }

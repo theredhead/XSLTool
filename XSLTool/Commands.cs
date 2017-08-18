@@ -24,5 +24,14 @@ namespace XSLTool
 				nameof(Transform),
 				typeof(Commands));
 
+		public static readonly RoutedUICommand SaveOutputToFile
+			= new RoutedUICommand("Save Generated output to file",
+				nameof(SaveOutputToFile),
+				typeof(Commands));
+
+		public static readonly RoutedUICommand ShowAboutBox
+			= new RoutedUICommand("Show the about box",
+				nameof(ShowAboutBox),
+				typeof(Commands));
 	}
 }

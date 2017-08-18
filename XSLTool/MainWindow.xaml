@@ -6,78 +6,95 @@
         xmlns:local="clr-namespace:XSLTool"
 		  mc:Ignorable="d" Title="XSLTool" Height="350" Width="525" Loaded="Window_Loaded">
 
-	<Window.CommandBindings>
-		<CommandBinding Command="{x:Static local:Commands.ChooseXmlFile}" Executed="ChooseXmlFile_Executed" />
-		<CommandBinding Command="{x:Static local:Commands.ChooseXsltFile}" Executed="ChooseXsltFile_Executed" />
-		<CommandBinding Command="{x:Static local:Commands.Transform}" Executed="Transform_Executed" />
+	 <Window.CommandBindings>
+		  <CommandBinding Command="{x:Static local:Commands.ChooseXmlFile}" Executed="ChooseXmlFile_Executed" />
+		  <CommandBinding Command="{x:Static local:Commands.ChooseXsltFile}" Executed="ChooseXsltFile_Executed" />
+		  <CommandBinding Command="{x:Static local:Commands.Transform}" Executed="Transform_Executed" />
+		  <CommandBinding Command="{x:Static local:Commands.SaveOutputToFile}" Executed="SaveOutputToFile_Executed"/>
+		  <CommandBinding Command="{x:Static local:Commands.ShowAboutBox}" Executed="ShowAboutBox_Executed" />
+	 </Window.CommandBindings>
 
-	</Window.CommandBindings>	
-	
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="32" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="32" />
-		</Grid.RowDefinitions>
+	 <Window.InputBindings>
+		  <KeyBinding Key="S" Modifiers="Ctrl" Command="{x:Static local:Commands.SaveOutputToFile}"/>
+		  <KeyBinding Key="O" Modifiers="Ctrl" Command="{x:Static local:Commands.ChooseXmlFile}"/>
+		  <KeyBinding Key="O" Modifiers="Ctrl+Shift" Command="{x:Static local:Commands.ChooseXsltFile}"/>
+		  <KeyBinding Key="T" Modifiers="Ctrl" Command="{x:Static local:Commands.Transform}"/>
+	 </Window.InputBindings>
 
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="5" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
+	 <Grid>
+		  <Grid.RowDefinitions>
+				<RowDefinition Height="32" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="32" />
+		  </Grid.RowDefinitions>
 
-		<Menu HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Grid.RowSpan="1" VerticalAlignment="Stretch" Background="{DynamicResource {x:Static SystemColors.WindowColor}}">
-			<MenuItem Header="File">
-				<MenuItem Header="Choose Data file..." Command="{x:Static local:Commands.ChooseXmlFile}"/>
-				<MenuItem Header="Choose Sheet file..." Command="{x:Static local:Commands.ChooseXsltFile}"/>
-				<Separator />
-				<MenuItem Header="E_xit"/>
-			</MenuItem>
-		</Menu>
+		  <Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="5" />
+				<ColumnDefinition Width="*" />
+		  </Grid.ColumnDefinitions>
 
-		<WrapPanel Grid.Column="2" HorizontalAlignment="Right" Margin="5,5,5,5">
-			<ComboBox Name="OutputType" SelectedIndex="0" SelectionChanged="OutputType_SelectionChanged">
-				<ComboBoxItem Tag="XML">XML</ComboBoxItem>
-				<ComboBoxItem Tag="HTML">HTML</ComboBoxItem>
-				<ComboBoxItem Tag="SQL">SQL</ComboBoxItem>
-				<ComboBoxItem Tag="C#">C#</ComboBoxItem>
-				<ComboBoxItem Tag="Javascript">JavaScript</ComboBoxItem>
-			</ComboBox>
-			<GridSplitter Width="5"></GridSplitter>
-			<Button Name="TransformNow" Click="TransformNow_Click">Transform</Button>
-			<CheckBox Name="AutoTransformEnabled" IsChecked="True" Content="Auto" Grid.Column="2" HorizontalAlignment="Left" Margin="5,5,5,5" VerticalAlignment="Center"/>
-		</WrapPanel>
+		  <Menu HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Grid.RowSpan="1" VerticalAlignment="Stretch" Background="{DynamicResource {x:Static SystemColors.WindowColor}}">
+				<MenuItem Header="File">
+					 <MenuItem Header="Choose Data file..." Command="{x:Static local:Commands.ChooseXmlFile}" InputGestureText="Ctrl+O"/>
+					 <MenuItem Header="Choose Sheet file..." Command="{x:Static local:Commands.ChooseXsltFile}" InputGestureText="Ctrl+Shift+O"/>
+					 <Separator />
+					 <MenuItem Header="Save Generated Output..." Command="{x:Static local:Commands.SaveOutputToFile}" InputGestureText="Ctrl+S"/>
+					 <Separator />
+					 <MenuItem Header="E_xit" InputGestureText="Alt+F4"/>
+				</MenuItem>
+				<MenuItem Header="Help">
+					 <MenuItem Header="Help topics" IsEnabled="False" />
+					 <Separator />
+					 <MenuItem Header="About XSLTool..." Command="{x:Static local:Commands.ShowAboutBox}"/>
+				</MenuItem>
+		  </Menu>
 
+		  <WrapPanel Grid.Column="2" HorizontalAlignment="Right" Margin="5,5,5,5">
+				<CheckBox Name="VisualDisplayToggle" IsChecked="False" IsEnabled="False" Content="Visual" Grid.Column="2" HorizontalAlignment="Left" Margin="5,5,5,5" VerticalAlignment="Center" Checked="VisualDisplayToggle_Toggled" Unchecked="VisualDisplayToggle_Toggled"/>
+				<ComboBox Name="OutputType" SelectedIndex="0" SelectionChanged="OutputType_SelectionChanged">
+					 <ComboBoxItem Tag="XML">XML</ComboBoxItem>
+					 <ComboBoxItem Tag="HTML">HTML</ComboBoxItem>
+					 <ComboBoxItem Tag="SQL">SQL</ComboBoxItem>
+					 <ComboBoxItem Tag="C#">C#</ComboBoxItem>
+					 <ComboBoxItem Tag="Javascript">JavaScript</ComboBoxItem>
+				</ComboBox>
+				<GridSplitter Width="5"></GridSplitter>
 
-		<TabControl Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-			<TabItem Header="Data" MouseDoubleClick="TabItem_MouseDoubleClick" Tag="CHOOSE_XML">
-				<Grid Background="#FFE5E5E5">
-					<!-- avalon editor 1 -->
-
-					<avalon:TextEditor xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit" Name="Data" SyntaxHighlighting="XML" FontFamily="Consolas" ShowLineNumbers="True" KeyDown="Editor_KeyDown">
-					</avalon:TextEditor>
-
-				</Grid>
-			</TabItem>
-			<TabItem Header="Sheet" MouseDoubleClick="TabItem_MouseDoubleClick" Tag="CHOOSE_XSLT">
-				<Grid Background="#FFE5E5E5">
-					<!-- avalon editor 1 -->
-
-					<avalon:TextEditor xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit" Name="Sheet" SyntaxHighlighting="XML" FontFamily="Consolas" Grid.ColumnSpan="3" ShowLineNumbers="True" KeyDown="Editor_KeyDown">
-					</avalon:TextEditor>
-
-				</Grid>
-			</TabItem>
-		</TabControl>
-
-		<GridSplitter Grid.Row="1" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+				<Button Name="TransformNow" Click="TransformNow_Click">Transform</Button>
+				<CheckBox Name="AutoTransformEnabled" IsChecked="True" Content="Auto" Grid.Column="2" HorizontalAlignment="Left" Margin="5,5,5,5" VerticalAlignment="Center"/>
+		  </WrapPanel>
 
 
-		<avalon:TextEditor Grid.Row="1" Grid.Column="2" xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit" Name="Output" SyntaxHighlighting="None" FontFamily="Consolas" ShowLineNumbers="True">
-		</avalon:TextEditor>
-		
-		
-		<Label Name="StatusMessage" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch"/>
-	</Grid>
+		  <TabControl Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+				<TabItem Header="Data" MouseDoubleClick="TabItem_MouseDoubleClick" Tag="CHOOSE_XML">
+					 <Grid Background="#FFE5E5E5">
+						  <!-- avalon editor 1 -->
+
+						  <avalon:TextEditor xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit" Name="Data" SyntaxHighlighting="XML" FontFamily="Consolas" ShowLineNumbers="True" KeyDown="Editor_KeyDown">
+						  </avalon:TextEditor>
+
+					 </Grid>
+				</TabItem>
+				<TabItem Header="Sheet" MouseDoubleClick="TabItem_MouseDoubleClick" Tag="CHOOSE_XSLT">
+					 <Grid Background="#FFE5E5E5">
+						  <!-- avalon editor 1 -->
+
+						  <avalon:TextEditor xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit" Name="Sheet" SyntaxHighlighting="XML" FontFamily="Consolas" Grid.ColumnSpan="3" ShowLineNumbers="True" KeyDown="Editor_KeyDown">
+						  </avalon:TextEditor>
+
+					 </Grid>
+				</TabItem>
+		  </TabControl>
+
+		  <GridSplitter Grid.Row="1" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+
+		  <!-- avalon editor Output and WebBrowser Browser shall never be visible at the same time. -->
+		  <avalon:TextEditor Visibility="Visible" Grid.Row="1" Grid.Column="2" xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit" Name="Output" SyntaxHighlighting="None" FontFamily="Consolas" ShowLineNumbers="True">
+		  </avalon:TextEditor>
+		  <WebBrowser Name="Browser"  Grid.Row="1" Grid.Column="2" Visibility="Hidden"/>
+
+		  <Label Name="StatusMessage" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch"/>
+	 </Grid>
 
 </Window>
