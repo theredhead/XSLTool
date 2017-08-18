@@ -8,7 +8,9 @@
 
 	 <Window.CommandBindings>
 		  <CommandBinding Command="{x:Static local:Commands.ChooseXmlFile}" Executed="ChooseXmlFile_Executed" />
+		  <CommandBinding Command="{x:Static local:Commands.SaveXmlFile}" Executed="SaveXmlFile_Executed" />
 		  <CommandBinding Command="{x:Static local:Commands.ChooseXsltFile}" Executed="ChooseXsltFile_Executed" />
+		  <CommandBinding Command="{x:Static local:Commands.SaveXsltFile}" Executed="SaveXsltFile_Executed" />
 		  <CommandBinding Command="{x:Static local:Commands.Transform}" Executed="Transform_Executed" />
 		  <CommandBinding Command="{x:Static local:Commands.SaveOutputToFile}" Executed="SaveOutputToFile_Executed"/>
 		  <CommandBinding Command="{x:Static local:Commands.ShowAboutBox}" Executed="ShowAboutBox_Executed" />
@@ -37,7 +39,10 @@
 		  <Menu HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Grid.RowSpan="1" VerticalAlignment="Stretch" Background="{DynamicResource {x:Static SystemColors.WindowColor}}">
 				<MenuItem Header="File">
 					 <MenuItem Header="Choose Data file..." Command="{x:Static local:Commands.ChooseXmlFile}" InputGestureText="Ctrl+O"/>
+					 <MenuItem Header="Save Data file..." Command="{x:Static local:Commands.SaveXmlFile}" />
+					 <Separator />
 					 <MenuItem Header="Choose Sheet file..." Command="{x:Static local:Commands.ChooseXsltFile}" InputGestureText="Ctrl+Shift+O"/>
+					 <MenuItem Header="Save Sheet file..." Command="{x:Static local:Commands.ChooseXsltFile}" />
 					 <Separator />
 					 <MenuItem Header="Save Generated Output..." Command="{x:Static local:Commands.SaveOutputToFile}" InputGestureText="Ctrl+S"/>
 					 <Separator />
@@ -67,7 +72,7 @@
 
 
 		  <TabControl Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-				<TabItem Header="Data" MouseDoubleClick="TabItem_MouseDoubleClick" Tag="CHOOSE_XML">
+				<TabItem Header="Data" Tag="CHOOSE_XML" Name="DataTabPage">
 					 <Grid Background="#FFE5E5E5">
 						  <!-- avalon editor 1 -->
 
@@ -76,7 +81,7 @@
 
 					 </Grid>
 				</TabItem>
-				<TabItem Header="Sheet" MouseDoubleClick="TabItem_MouseDoubleClick" Tag="CHOOSE_XSLT">
+				<TabItem Header="Sheet" Tag="CHOOSE_XSLT" Name="SheetTabPage">
 					 <Grid Background="#FFE5E5E5">
 						  <!-- avalon editor 1 -->
 

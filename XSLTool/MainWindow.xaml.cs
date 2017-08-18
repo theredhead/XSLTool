@@ -32,6 +32,41 @@ namespace XSLTool
 		private const string TAG_CHOOSE_XML = "CHOOSE_XML";
 		private const string TAG_EXIT = "EXIT";
 
+		string dataFileName = null;
+		string sheetFileName = null;
+		string outputFileName = null;
+
+		private bool _dataHasChanges = false;
+		private bool _sheetHasChanges = false;
+		private bool _outputHasChanges = false;
+
+		public bool DataHasChanges
+		{
+			get { return _dataHasChanges; }
+			set { _dataHasChanges = value; UpdateDataTabHeader(value); }
+		}
+		public bool SheetHasChanges
+		{
+			get { return _sheetHasChanges; }
+			set { _sheetHasChanges = value; UpdateSheetTabHeader(value); }
+		}
+
+		public bool OutputHasChanges
+		{
+			get { return _outputHasChanges; }
+			set { _outputHasChanges = value; }
+		}
+
+		private void UpdateDataTabHeader(bool hasChanges)
+		{
+			DataTabPage.Header = hasChanges ? "Data *" : "Data";
+		}
+		private void UpdateSheetTabHeader(bool hasChanges)
+		{
+			SheetTabPage.Header = hasChanges ? "Sheet *" : "Sheet";
+		}
+
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -236,6 +271,11 @@ namespace XSLTool
 		private void Editor_KeyDown(object sender, KeyEventArgs e)
 		{
 			RecordMutatingKeyPress();
+
+			if (sender.Equals(Data))
+				DataHasChanges = true;
+			else if (sender.Equals(Sheet))
+				SheetHasChanges = true;
 		}
 
 		private void ChooseXmlFile_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -278,18 +318,55 @@ namespace XSLTool
 		}
 		private void SaveOutputToFile_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			SaveFileDialog dialog = new SaveFileDialog();
-			dialog.Title = "Save generated output to file...";
-			dialog.CheckFileExists = true;
-			string ext = Output.SyntaxHighlighting.Name.ToLower();
-			dialog.Filter = $"{ext}|*.{ext}|Any|*.*";
+			SaveFileWithPrompt("Save generated output to file...", Output.Text, DetermineOutputExtension(), (fileName) => {
+				OutputHasChanges = false;
+				outputFileName = fileName;
+			});
+		}
 
+		private string DetermineOutputExtension()
+		{
+			string language = Output.SyntaxHighlighting.Name.ToLower();
+			switch(language)
+			{
+				case "C#": return "cs";
+				default:
+					return language.ToLower();
+			}
+		}
+
+		private void SaveXmlFile_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			SaveFileWithPrompt("Save XML to file...", Data.Text, "xml", (fileName) => {
+				DataHasChanges = false;
+				dataFileName = fileName;
+			});
+		}
+		private void SaveXsltFile_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			SaveFileWithPrompt("Save XSLL sheet to file...", Sheet.Text, "xml", (fileName) => {
+				SheetHasChanges = false;
+				sheetFileName = fileName;
+			});
+		}
+
+		private bool SaveFileWithPrompt(string prompt, string content, string extension, Action<string> onSave)
+		{
+			SaveFileDialog dialog = new SaveFileDialog();
+			dialog.Title = prompt;
+			dialog.CheckFileExists = true;
+
+			dialog.Filter = $"{extension}|*.{extension}|Any|*.*";
+			bool saved = false;
 			dialog.FileOk += (o, arg) => {
 				string path = dialog.FileName;
-				File.WriteAllText(path, Output.Text);
+				File.WriteAllText(path, content);
+				saved = true;
+				onSave(path);
 			};
 
 			dialog.ShowDialog(this);
+			return saved;
 		}
 	}
 }

@@ -13,10 +13,18 @@ namespace XSLTool
 			= new RoutedUICommand("Open XML Data File",
 				nameof(ChooseXmlFile),
 				typeof(Commands));
+		public static readonly RoutedUICommand SaveXmlFile
+			= new RoutedUICommand("Save the current XML Data File",
+				nameof(SaveXmlFile),
+				typeof(Commands));
 
-		public static readonly RoutedUICommand ChooseXsltFile 
+		public static readonly RoutedUICommand ChooseXsltFile
 			= new RoutedUICommand("Open XSLT Stylesheet File",
 				nameof(ChooseXsltFile),
+				typeof(Commands));
+		public static readonly RoutedUICommand SaveXsltFile
+			= new RoutedUICommand("Save the current XSLT Stylesheet File",
+				nameof(SaveXsltFile),
 				typeof(Commands));
 
 		public static readonly RoutedUICommand Transform
