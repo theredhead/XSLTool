@@ -37,6 +37,11 @@ namespace XSLTool
 				nameof(SaveOutputToFile),
 				typeof(Commands));
 
+		public static readonly RoutedUICommand ExportOutputToPDFFile
+			= new RoutedUICommand("Export Generated output to a PDF file",
+				nameof(ExportOutputToPDFFile),
+				typeof(Commands));
+
 		public static readonly RoutedUICommand ShowAboutBox
 			= new RoutedUICommand("Show the about box",
 				nameof(ShowAboutBox),

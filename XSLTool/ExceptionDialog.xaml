@@ -1,0 +1,34 @@
+﻿<Window x:Class="XSLTool.ExceptionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:XSLTool"
+        mc:Ignorable="d"
+        Title="Oops, something went wrong..." Height="209.121" Width="530.13">
+	 <Grid>
+		  <Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+				<RowDefinition Height="50" />
+		  </Grid.RowDefinitions>
+		  <Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+		  </Grid.ColumnDefinitions>
+		  
+		  <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" Margin="10">
+				<TextBlock Name="Introduction">
+					 The application encountered a problem that could not be resolved without your help.
+				</TextBlock>
+				<TextBlock Name="Message"></TextBlock>
+				<TextBlock Name="Details"></TextBlock>
+		  </StackPanel>
+
+		  <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+
+				<Button Name="SaveReportButton" Margin="10" ToolTip="Save an error report to file..." Click="SaveReportButton_Click">Save Report...</Button>
+				<Button Name="ExitButton" Margin="10" ToolTip="Allow the program to crash and exit." Click="ExitButton_Click">Exit</Button>
+				<Button Name="IgnoreButton" Margin="10" ToolTip="Ignore the problem and continue working" Click="IgnoreButton_Click">Ignore</Button>
+		  </StackPanel>
+	 </Grid>
+</Window>
