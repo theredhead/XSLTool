@@ -20,6 +20,9 @@ using System.Xml.Xsl;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.Win32;
+using PdfSharp.Pdf;
+using TheArtOfDev.HtmlRenderer.PdfSharp;
+using PdfSharp;
 
 namespace XSLTool
 {
@@ -70,6 +73,13 @@ namespace XSLTool
 		public MainWindow()
 		{
 			InitializeComponent();
+			Loaded += MainWindow_Loaded;
+		}
+
+		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+		{
+			SetOutputHighlighting("HTML");
+			VisualDisplayToggle.IsChecked = true;
 		}
 
 		private void ChooseDataFile()
@@ -318,7 +328,8 @@ namespace XSLTool
 		}
 		private void SaveOutputToFile_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			SaveFileWithPrompt("Save generated output to file...", Output.Text, DetermineOutputExtension(), (fileName) => {
+			SaveTextFileWithPrompt("Save generated output to file...", Output.Text, DetermineOutputExtension(), (fileName) =>
+			{
 				OutputHasChanges = false;
 				outputFileName = fileName;
 			});
@@ -327,7 +338,7 @@ namespace XSLTool
 		private string DetermineOutputExtension()
 		{
 			string language = Output.SyntaxHighlighting.Name.ToLower();
-			switch(language)
+			switch (language)
 			{
 				case "C#": return "cs";
 				default:
@@ -337,36 +348,72 @@ namespace XSLTool
 
 		private void SaveXmlFile_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			SaveFileWithPrompt("Save XML to file...", Data.Text, "xml", (fileName) => {
+			SaveTextFileWithPrompt("Save XML to file...", Data.Text, "xml", (fileName) =>
+			{
 				DataHasChanges = false;
 				dataFileName = fileName;
 			});
 		}
 		private void SaveXsltFile_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			SaveFileWithPrompt("Save XSLL sheet to file...", Sheet.Text, "xml", (fileName) => {
+			SaveTextFileWithPrompt("Save XSLL sheet to file...", Sheet.Text, "xml", (fileName) =>
+			{
 				SheetHasChanges = false;
 				sheetFileName = fileName;
 			});
 		}
-
-		private bool SaveFileWithPrompt(string prompt, string content, string extension, Action<string> onSave)
+		private void ExportOutputToPDFFile_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			SaveFileDialog dialog = new SaveFileDialog();
-			dialog.Title = prompt;
-			dialog.CheckFileExists = true;
+			try
+			{
+				PdfDocument pdf = PdfGenerator.GeneratePdf(Output.Text, PageSize.A4);
 
-			dialog.Filter = $"{extension}|*.{extension}|Any|*.*";
+				SaveFineFileWithPrompt("Export the generated html as PDF...", (path) =>
+				{
+					pdf.Save(path);
+				}, "PDF", null);
+			}
+			catch (Exception ex)
+			{
+				ExceptionDialog.Present(ex);
+			}
+		}
+
+		private bool SaveFineFileWithPrompt(string prompt, Action<string> doSave, string extension, Action<string> onSave = null)
+		{
 			bool saved = false;
-			dialog.FileOk += (o, arg) => {
-				string path = dialog.FileName;
-				File.WriteAllText(path, content);
-				saved = true;
-				onSave(path);
-			};
+			try
+			{
+				SaveFileDialog dialog = new SaveFileDialog();
+				dialog.Title = prompt;
+				dialog.CheckFileExists = false;
 
-			dialog.ShowDialog(this);
-			return saved;
+				dialog.Filter = $"{extension}|*.{extension}|Any|*.*";
+				dialog.FileOk += (o, arg) =>
+				{
+					string path = dialog.FileName;
+					doSave(path);
+					saved = true;
+					if (onSave != null)
+						onSave(path);
+				};
+
+				dialog.ShowDialog(this);
+				return saved;
+			}
+			catch (Exception ex)
+			{
+				ExceptionDialog.Present(ex);
+				return saved;
+			}
+		}
+
+		private bool SaveTextFileWithPrompt(string prompt, string content, string extension, Action<string> onSave = null)
+		{
+			return SaveFineFileWithPrompt(prompt, (path) =>
+			{
+				File.WriteAllText(path, content);
+			}, extension, onSave);
 		}
 	}
 }

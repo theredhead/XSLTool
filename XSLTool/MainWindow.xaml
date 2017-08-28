@@ -14,10 +14,12 @@
 		  <CommandBinding Command="{x:Static local:Commands.Transform}" Executed="Transform_Executed" />
 		  <CommandBinding Command="{x:Static local:Commands.SaveOutputToFile}" Executed="SaveOutputToFile_Executed"/>
 		  <CommandBinding Command="{x:Static local:Commands.ShowAboutBox}" Executed="ShowAboutBox_Executed" />
+		  <CommandBinding Command="{x:Static local:Commands.ExportOutputToPDFFile}" Executed="ExportOutputToPDFFile_Executed" />
 	 </Window.CommandBindings>
 
 	 <Window.InputBindings>
 		  <KeyBinding Key="S" Modifiers="Ctrl" Command="{x:Static local:Commands.SaveOutputToFile}"/>
+		  <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="{x:Static local:Commands.ExportOutputToPDFFile}"/>
 		  <KeyBinding Key="O" Modifiers="Ctrl" Command="{x:Static local:Commands.ChooseXmlFile}"/>
 		  <KeyBinding Key="O" Modifiers="Ctrl+Shift" Command="{x:Static local:Commands.ChooseXsltFile}"/>
 		  <KeyBinding Key="T" Modifiers="Ctrl" Command="{x:Static local:Commands.Transform}"/>
@@ -42,9 +44,11 @@
 					 <MenuItem Header="Save Data file..." Command="{x:Static local:Commands.SaveXmlFile}" />
 					 <Separator />
 					 <MenuItem Header="Choose Sheet file..." Command="{x:Static local:Commands.ChooseXsltFile}" InputGestureText="Ctrl+Shift+O"/>
-					 <MenuItem Header="Save Sheet file..." Command="{x:Static local:Commands.ChooseXsltFile}" />
+					 <MenuItem Header="Save Sheet file..." Command="{x:Static local:Commands.SaveXsltFile}" />
 					 <Separator />
 					 <MenuItem Header="Save Generated Output..." Command="{x:Static local:Commands.SaveOutputToFile}" InputGestureText="Ctrl+S"/>
+					 <MenuItem Header="Export a PDF..." Command="{x:Static local:Commands.ExportOutputToPDFFile}" InputGestureText="Ctrl+Shift+S"/>
+
 					 <Separator />
 					 <MenuItem Header="E_xit" InputGestureText="Alt+F4"/>
 				</MenuItem>
@@ -58,8 +62,8 @@
 		  <WrapPanel Grid.Column="2" HorizontalAlignment="Right" Margin="5,5,5,5">
 				<CheckBox Name="VisualDisplayToggle" IsChecked="False" IsEnabled="False" Content="Visual" Grid.Column="2" HorizontalAlignment="Left" Margin="5,5,5,5" VerticalAlignment="Center" Checked="VisualDisplayToggle_Toggled" Unchecked="VisualDisplayToggle_Toggled"/>
 				<ComboBox Name="OutputType" SelectedIndex="0" SelectionChanged="OutputType_SelectionChanged">
-					 <ComboBoxItem Tag="XML">XML</ComboBoxItem>
 					 <ComboBoxItem Tag="HTML">HTML</ComboBoxItem>
+					 <ComboBoxItem Tag="XML">XML</ComboBoxItem>
 					 <ComboBoxItem Tag="SQL">SQL</ComboBoxItem>
 					 <ComboBoxItem Tag="C#">C#</ComboBoxItem>
 					 <ComboBoxItem Tag="Javascript">JavaScript</ComboBoxItem>
